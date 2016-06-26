@@ -39,15 +39,17 @@ object WordCount {
       .textFile(getClass.getResource("/all-shakespeare.txt").getPath)                 // Load the text file from the resources folder
       .flatMap(_.split("""\w+"""))                                                    // Use a Regex to split per word
       .map(Row(_))                                                                    // Create a new Row with each String
+    // Perform a first count using the existing RDD
+    val wordCountRDD = shakespeareRDD.count
+    println(s"There are $wordCountRDD words contained in the documents. Using an RDD.")
     // Define the Schema of the RDD
     val schema = StructType(Array(StructField("word", StringType)))
     // Create a new DataFrame from the RDD given the information contained in the Schema
     val shakespeareDataFrame = sqlContext.createDataFrame(shakespeareRDD, schema)
     // Perform the actual computation: counting
-    val wordCount = shakespeareDataFrame.count
+    val wordCountDataFrame = shakespeareDataFrame.count
     // Print the result
-    println(s"There are $wordCount words contained in the documents")
-
+    println(s"There are $wordCountDataFrame words contained in the documents. Using a Data Frame.")
   }
 
 }
