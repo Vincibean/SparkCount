@@ -20,6 +20,7 @@ package org.vincibean.spark
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
+import org.slf4j.LoggerFactory
 
 /**
   * Apache Spark main and only job. To be used locally.
@@ -30,6 +31,9 @@ import org.apache.spark.{SparkConf, SparkContext}
 object WordCount {
 
   def main(args: Array[String]): Unit = {
+    // Create the logger
+    val logger = LoggerFactory.getLogger(WordCount.getClass)
+    logger.info("Hello from the Pizza class")
     // Create the SQLContext from a new SparkContext, which in turn will take a new SparkConf
     val sqlContext = new SQLContext(new SparkContext(new SparkConf()
       .setAppName("Apache Spark Word Count Example")                                  // Set a name to this job
@@ -41,7 +45,7 @@ object WordCount {
       .map(Row(_))                                                                    // Create a new Row with each String
     // Perform a first count using the existing RDD
     val wordCountRDD = shakespeareRDD.count
-    println(s"There are $wordCountRDD words contained in the documents. Using an RDD.")
+    logger.info(s"There are $wordCountRDD words contained in the documents. Using an RDD.")
     // Define the Schema of the RDD
     val schema = StructType(Array(StructField("word", StringType)))
     // Create a new DataFrame from the RDD given the information contained in the Schema
@@ -49,7 +53,7 @@ object WordCount {
     // Perform the actual computation: counting
     val wordCountDataFrame = shakespeareDataFrame.count
     // Print the result
-    println(s"There are $wordCountDataFrame words contained in the documents. Using a Data Frame.")
+    logger.info(s"There are $wordCountDataFrame words contained in the documents. Using a Data Frame.")
   }
 
 }
